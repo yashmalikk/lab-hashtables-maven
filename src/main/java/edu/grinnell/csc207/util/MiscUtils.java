@@ -12,14 +12,20 @@ public class MiscUtils {
   // | Static fields |
   // +---------------+
 
-  public static Random rand = new Random();
- 
+  /**
+   * A handy, dandy random number generator.
+   */
+  private static Random rand = new Random();
+
   // +----------------+----------------------------------------------
   // | Static methods |
   // +----------------+
 
   /**
    * Randomly permute an array.
+   *
+   * @param <T>
+   *   The type of values in the array.
    *
    * @param values
    *   The array we are permuting.
@@ -29,9 +35,9 @@ public class MiscUtils {
       MiscUtils.swap(values, i, i + rand.nextInt(values.length - i));
     } // for
   } // randomlyPermute(T[])
-  
+
   /**
-   * Randomly permute an array of integers
+   * Randomly permute an array of integers.
    *
    * @param values
    *   The array we are permuting.
@@ -41,9 +47,12 @@ public class MiscUtils {
       MiscUtils.swap(values, i, i + rand.nextInt(values.length - i));
     } // for
   } // randomlyPermute
-  
+
   /**
    * Swap two objects in an array.
+   *
+   * @param <T>
+   *   The type of values in the array.
    *
    * @param values
    *   The array.
@@ -84,12 +93,19 @@ public class MiscUtils {
    * Make a new iterator that works just like the given iterator, except that
    * the given function is applied to the result of next.
    *
+   * @param <T>
+   *   The type of values returned by the original iterator.
+   * @param <U>
+   *   The type of values returned by the new iterator.
+   *
    * @param iterator
    *   The iterator to transform.
    * @param fun
    *   The function to apply to each element.
+   *
+   * @return the new iterator.
    */
-  public static <T,U> Iterator<U> transform(Iterator<T> iterator,
+  public static <T, U> Iterator<U> transform(Iterator<T> iterator,
       Function<? super T, ? extends U> fun) {
     return new Iterator<U>() {
       public boolean hasNext() {

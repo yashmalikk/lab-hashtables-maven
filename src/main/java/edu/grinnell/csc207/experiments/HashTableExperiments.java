@@ -8,6 +8,7 @@ import java.io.PrintWriter;
  * A simple set of experiments using our new hash tables.
  *
  * @author Your Name Here
+ * @author Your Name Here
  * @author Samuel A. Rebelsky
  */
 public class HashTableExperiments {
@@ -32,8 +33,15 @@ public class HashTableExperiments {
 
   /**
    * A short experiment with getting a value from the hash table.
+   *
+   * @param pen
+   *   Where to print messages.
+   * @param htab
+   *   The table to use.
+   * @param key
+   *   The key to search for.
    */
-  public static void checkGet(PrintWriter pen, HashTable<String,String> htab,
+  public static void checkGet(PrintWriter pen, HashTable<String, String> htab,
       String key) {
     pen.print("Getting " + key + " ... ");
     pen.flush();
@@ -42,21 +50,31 @@ public class HashTableExperiments {
     } catch (Exception e) {
       pen.println("Failed because " + e);
     } // try/catch
-  } // checkGet(PrintWriter, HashTable<String,String>, String)
+  } // checkGet(PrintWriter, HashTable<String, String>, String)
 
   /**
    * Explore what happens when we use set with a repeated key.
+   *
+   * @param pen
+   *   Where to print messages.
+   * @param htab
+   *   The table to use.
    */
   public static void repeatedSetExpt(PrintWriter pen,
-      HashTable<String,String> htab) {
+      HashTable<String, String> htab) {
     // STUB
   } // repeatedSetExpt(PrintWriter, HashTable)
 
   /**
    * Explore what happens when we use two keys that map to the same location.
+   *
+   * @param pen
+   *   Where to print messages.
+   * @param htab
+   *   The table to use.
    */
   public static void matchingKeysExpt(PrintWriter pen,
-      HashTable<String,String> htab) {
+      HashTable<String, String> htab) {
     pen.println("Setting anteater");
     htab.set("anteater", "anteater");
     checkGet(pen, htab, "anteater");
@@ -67,9 +85,14 @@ public class HashTableExperiments {
 
   /**
    * Explore what happens when we use two keys that map to the same location.
+   *
+   * @param pen
+   *   Where to print messages.
+   * @param htab
+   *   The table to use.
    */
   public static void matchingSetExpt(PrintWriter pen,
-      HashTable<String,String> htab) {
+      HashTable<String, String> htab) {
     pen.println("Setting anteater");
     htab.set("anteater", "anteater");
     htab.set("buffalo", "buffalo");
@@ -82,9 +105,14 @@ public class HashTableExperiments {
   /**
    * Explore what happens when we use set with a wide variety of key/value
    * pairs.
+   *
+   * @param pen
+   *   Where to print messages.
+   * @param htab
+   *   The table to use.
    */
   public static void multipleSetExpt(PrintWriter pen,
-      HashTable<String,String> htab) {
+      HashTable<String, String> htab) {
     int numwords = words.length;
     for (int i = 0; i < numwords; i++) {
       // htab.dump(pen);
@@ -112,9 +140,14 @@ public class HashTableExperiments {
 
   /**
    * Explore what happens when we remove elements.
+   *
+   * @param pen
+   *   Where to print messages.
+   * @param htab
+   *   The table to use.
    */
   public static void removeExpt(PrintWriter pen,
-      HashTable<String,String> htab) {
+      HashTable<String, String> htab) {
     // STUB
   } // removeExpt(PrintWriter, HashTable)
 

@@ -6,6 +6,9 @@ package edu.grinnell.csc207.util;
 public interface Reporter {
   /**
    * Report.
+   *
+   * @param str
+   *   The string to report/print.
    */
   public void report(String str);
 } // Reporter

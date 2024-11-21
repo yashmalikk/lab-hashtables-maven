@@ -6,12 +6,18 @@ import java.util.Random;
 import java.util.function.BiConsumer;
 
 /**
- * A simple implementation of hash tables.
+ * A simple implementation of probed hash tables.
  *
- * @author Samuel A. Rebelsky
  * @author Your Name Here
+ * @author Your Name Here
+ * @author Samuel A. Rebelsky
+ *
+ * @param <K>
+ *   The type of keys.
+ * @param <V>
+ *   The type of values.
  */
-public class ProbedHashTable<K,V> implements HashTable<K,V> {
+public class ProbedHashTable<K, V> implements HashTable<K, V> {
 
   // +-------+-----------------------------------------------------------
   // | Notes |
@@ -22,39 +28,39 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
    * design of Java arrays, we declare that as type Object[] and cast whenever
    * we remove an element. (SamR needs to find a better way to deal with this
    * issue; using ArrayLists doesn't seem like the best idea.)
-   * 
+   *
    * We use linear probing to handle collisions. (Well, we *will* use linear
    * probing, once the table is finished.)
-   * 
+   *
    * We expand the hash table when the load factor is greater than LOAD_FACTOR
    * (see constants below).
-   * 
+   *
    * Since some combinations of data and hash function may lead to a situation
    * in which we get a surprising relationship between values (e.g., all the
    * hash values are 0 mod 32), when expanding the hash table, we incorporate a
    * random number. (Is this likely to make a big difference? Who knows. But
    * it's likely to be fun.)
-   * 
+   *
    * For experimentation and such, we allow the client to supply a Reporter that
    * is used to report behind-the-scenes work, such as calls to expand the
    * table.
-   * 
+   *
    * Bugs to squash.
-   * 
+   *
    * [ ] Doesn't check for repeated keys in set.
-   * 
+   *
    * [ ] Doesn't check for matching key in get.
-   * 
+   *
    * [ ] Doesn't handle collisions.
-   * 
+   *
    * [ ] The `expand` method is not completely implemented.
-   * 
+   *
    * [ ] The `remove` method is not implemented.
-   * 
+   *
    * Features to add.
-   * 
+   *
    * [ ] A full implementation of `containsKey`.
-   * 
+   *
    * [ ] An iterator.
    */
 
@@ -120,10 +126,13 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
 
   /**
    * Create a new hash table that reports activities using a reporter.
+   *
+   * @param report
+   *   The object used to report activities.
    */
-  public ProbedHashTable(Reporter reporter) {
+  public ProbedHashTable(Reporter report) {
     this();
-    this.reporter = reporter;
+    this.reporter = report;
   } // ProbedHashTable(Reporter)
 
   // +-------------------+-------------------------------------------
@@ -132,6 +141,11 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
 
   /**
    * Determine if the hash table contains a particular key.
+   *
+   * @param key
+   *   The key to look for.
+   *
+   * @return true if the key is in the table and false otherwise.
    */
   @Override
   public boolean containsKey(K key) {
@@ -145,22 +159,33 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
   } // containsKey(K)
 
   /**
-   * Apply a function to each key/value pair.
+   * Apply a function to each key/value pair in the table.
+   *
+   * @param action
+   *   The function to apply. Takes a key and a value as parameters.
    */
   public void forEach(BiConsumer<? super K, ? super V> action) {
-    for (Pair<K,V> pair : this) {
+    for (Pair<K, V> pair : this) {
       action.accept(pair.key(), pair.value());
     } // for
   } // forEach(BiConsumer)
 
   /**
    * Get the value for a particular key.
+   *
+   * @param key
+   *   The key to search for.
+   *
+   * @return the corresponding value.
+   *
+   * @throws IndexOutOfBoundsException
+   *   when the key is not in the table.
    */
   @Override
   public V get(K key) {
     int index = find(key);
     @SuppressWarnings("unchecked")
-    Pair<K,V> pair = (Pair<K,V>) pairs[index];
+    Pair<K, V> pair = (Pair<K, V>) pairs[index];
     if (pair == null) {
       if (REPORT_BASIC_CALLS && (reporter != null)) {
         reporter.report("get(" + key + ") failed");
@@ -176,6 +201,9 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
 
   /**
    * Iterate the keys in some order.
+   *
+   * @return
+   *   An iterator for the keys.
    */
   public Iterator<K> keys() {
     return MiscUtils.transform(this.iterator(), (pair) -> pair.key());
@@ -183,6 +211,12 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
 
   /**
    * Remove a key/value pair.
+   *
+   * @param key
+   *   The key of the key/value pair.
+   *
+   * @return
+   *   The corresponding value.
    */
   @Override
   public V remove(K key) {
@@ -192,6 +226,13 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
 
   /**
    * Set a value.
+   *
+   * @param key
+   *   The key to set.
+   * @param value
+   *   The value to set.
+   *
+   * @return the prior value for the key, if there was one, or null.
    */
   @SuppressWarnings("unchecked")
   public V set(K key, V value) {
@@ -203,9 +244,9 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
     // Find out where the key belongs and put the pair there.
     int index = find(key);
     if (this.pairs[index] != null) {
-      result = ((Pair<K,V>) this.pairs[index]).value();
+      result = ((Pair<K, V>) this.pairs[index]).value();
     } // if
-    this.pairs[index] = new Pair<K,V>(key, value);
+    this.pairs[index] = new Pair<K, V>(key, value);
     // Report activity, if appropriate
     if (REPORT_BASIC_CALLS && (reporter != null)) {
       reporter.report("pairs[" + index + "] = " + key + ":" + value);
@@ -214,10 +255,13 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
     ++this.size;
     // And we're done
     return result;
-  } // set(K,V)
+  } // set(K, V)
 
   /**
-   * Get the size of the dictionary - the number of values stored.
+   * Get the size of the dictionary - the number of key/value pairs
+   * stored in the dictionary.
+   *
+   * @return the number of key/value pairs in the dictionary.
    */
   @Override
   public int size() {
@@ -226,6 +270,8 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
 
   /**
    * Iterate the values in some order.
+   *
+   * @return an iterator for the values.
    */
   public Iterator<V> values() {
     return MiscUtils.transform(this.iterator(), (pair) -> pair.value());
@@ -237,15 +283,17 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
 
   /**
    * Iterate the key/value pairs in some order.
+   *
+   * @return an iterator for the key/value pairs.
    */
-  public Iterator<Pair<K,V>> iterator() {
-    return new Iterator<Pair<K,V>>() {
+  public Iterator<Pair<K, V>> iterator() {
+    return new Iterator<Pair<K, V>>() {
       public boolean hasNext() {
         // STUB
         return false;
       } // hasNext()
 
-      public Pair<K,V> next() {
+      public Pair<K, V> next() {
         // STUB
         return null;
       } // next()
@@ -267,6 +315,9 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
 
   /**
    * Dump the hash table.
+   *
+   * @param pen
+   *   Where to dump the table.
    */
   @Override
   public void dump(PrintWriter pen) {
@@ -274,7 +325,7 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
     int printed = 0; // Number of elements printed
     for (int i = 0; i < this.pairs.length; i++) {
       @SuppressWarnings("unchecked")
-      Pair<K,V> pair = (Pair<K,V>) this.pairs[i];
+      Pair<K, V> pair = (Pair<K, V>) this.pairs[i];
       if (pair != null) {
         pen.print(i + ":" + pair.key() + "(" + pair.key().hashCode() + "):"
             + pair.value());
@@ -292,6 +343,9 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
 
   /**
    * Should we report basic calls? Intended mostly for tracing.
+   *
+   * @param report
+   *   Use true if you want basic calls reported and false otherwise.
    */
   public void reportBasicCalls(boolean report) {
     REPORT_BASIC_CALLS = report;
@@ -321,10 +375,15 @@ public class ProbedHashTable<K,V> implements HashTable<K,V> {
   /**
    * Find the index of the entry with a given key. If there is no such entry,
    * return the index of an entry we can use to store that key.
+   *
+   * @param key
+   *   The key we're searching for.
+   *
+   * @return the aforementioned index.
    */
   int find(K key) {
     return Math.abs(key.hashCode()) % this.pairs.length;
   } // find(K)
 
-} // class ProbedHashTable<K,V>
+} // class ProbedHashTable<K, V>
 

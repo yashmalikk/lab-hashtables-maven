@@ -20,6 +20,9 @@ public class ProbedHashTableExperiments {
 
   /**
    * Do whatever experiments seem reasonable.
+   *
+   * @param args
+   *   Command-line arguments (ignored).
    */
   public static void main(String[] args) {
     // Create our normal output mechanism.

@@ -7,6 +7,10 @@ import java.io.PrintWriter;
 
 /**
  * A simple experiment with probed hash tables.
+ *
+ * @author Your Name Here
+ * @author Your Name Here
+ * @author Samuel A. Rebelsky
  */
 public class ChainedHashTableExperiments {
 
@@ -16,6 +20,9 @@ public class ChainedHashTableExperiments {
 
   /**
    * Do whatever experiments seem reasonable.
+   *
+   * @param args
+   *   Command-line arguments (ignored).
    */
   public static void main(String[] args) {
     // Create our normal output mechanism.
